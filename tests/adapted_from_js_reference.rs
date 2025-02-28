@@ -1,7 +1,9 @@
+mod common;
+
 use std::collections::HashMap;
 use std::f64;
 
-use crate::common::{deserializes_to, deserializes_to_nan_f64};
+use common::{deserializes_to, deserializes_to_nan_f64};
 
 // The following tests are adapted from https://github.com/json5/json5/blob/d828908384ce8dc40d8dde017ae82afd1b952d79/test/parse.js
 

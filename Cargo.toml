@@ -1,21 +1,13 @@
 [package]
 name = "serde_json5"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Gary Bressler <geb@google.com>"]
 description = "A Serde (de)serializer for JSON5."
-license = "Apache-2.0"
+license = "Apache-2.0 AND ISC"
 repository = "https://github.com/google/serde_json5"
 readme = "README.md"
 keywords = ["json5", "json", "serde", "serialization"]
 edition = "2021"
-
-[lib]
-name = "serde_json5"
-path = "third_party/src/lib.rs"
-
-[[test]]
-name = "serde_json5_test"
-path = "third_party/tests/lib.rs"
 
 [dependencies]
 pest = "2.0"
