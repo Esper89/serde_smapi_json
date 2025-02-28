@@ -1,3 +1,5 @@
+mod common;
+
 use serde::de;
 use serde_derive::Deserialize;
 
@@ -5,7 +7,7 @@ use core::f64;
 use std::collections::HashMap;
 use std::fmt;
 
-use crate::common::{
+use common::{
     deserializes_to, deserializes_to_nan_f32, deserializes_to_nan_f64, deserializes_with_error,
     make_error,
 };

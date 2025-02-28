@@ -1,8 +1,10 @@
+mod common;
+
 use serde_derive::Deserialize;
 use std::fs::File;
 use std::io::prelude::*;
 
-use crate::common::deserializes_to;
+use common::deserializes_to;
 
 #[derive(Deserialize, PartialEq, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -22,7 +24,7 @@ struct Example {
 #[test]
 fn serializes_example_from_json5_dot_org() {
     let mut contents = String::new();
-    File::open("third_party/tests/assets/json5_dot_org_example.json5")
+    File::open("tests/assets/json5_dot_org_example.json5")
         .unwrap()
         .read_to_string(&mut contents)
         .unwrap();
