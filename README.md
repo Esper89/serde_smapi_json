@@ -1,10 +1,10 @@
-# JSON5
+# SMAPI JSON
 
-A Rust library for serializing and deserializing [JSON5][json5] with
-[Serde][serde].
+A Rust library for serializing [JSON5](https://json5.org/) and deserializing SMAPI JSON.
 
-This project is a fork of [callum-oakley/json5-rs][github-json5-rs].
+SMAPI JSON allows even more than JSON5. Specifically,
 
-[json5]: https://json5.org/
-[serde]: https://serde.rs/
-[github-json5-rs]: https://github.com/callum-oakley/json5-rs
+- String literals can have control characters (including newlines) directly in them.
+- Multiple commas in a row are treated as a single comma.
+- Integer literals can be keys in objects.
+- Files can be completely empty.

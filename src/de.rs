@@ -28,13 +28,13 @@ WHITESPACE = _{
   line_terminator
 }
 
-array = { "[" ~ "]" | "[" ~ value ~ ("," ~ value)* ~ ","? ~ "]" }
+array = { "[" ~ "]" | "[" ~ value ~ (","+ ~ value)* ~ ","* ~ "]" }
 
 boolean = @{ "true" | "false" }
 
 char_escape_sequence = @{ single_escape_char | non_escape_char }
 
-char_literal = @{ !("\\" | line_terminator) ~ ANY }
+char_literal = @{ !("\\") ~ ANY }
 
 decimal_integer_literal = _{ "0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
 
@@ -84,7 +84,9 @@ identifier_start = _{
   "\\u" ~ unicode_escape_sequence
 }
 
-key = _{ identifier | string }
+idinteger = ${ DECIMAL_NUMBER+ }
+
+key = _{ identifier | string | idinteger }
 
 line_continuation = _{ "\\" ~ line_terminator_sequence }
 
@@ -93,6 +95,8 @@ line_terminator = _{ "\u{000A}" | "\u{000D}" | "\u{2028}" | "\u{2029}" }
 line_terminator_sequence = _{ "\u{000D}" ~ "\u{000A}" | line_terminator }
 
 non_escape_char = _{ !(escape_char | line_terminator) ~ ANY }
+
+none = @{ "" }
 
 nul_escape_sequence = @{ "0" }
 
@@ -107,7 +111,7 @@ numeric_literal = _{
   "NaN"
 }
 
-object = { "{" ~ "}" | "{" ~ pair ~ ("," ~ pair)* ~ ","? ~ "}" }
+object = { "{" ~ "}" | "{" ~ pair ~ (","+ ~ pair)* ~ ","* ~ "}" }
 
 pair = _{ key ~ ":" ~ value }
 
@@ -121,7 +125,7 @@ single_quote_char = _{
 
 string = ${ "\"" ~ double_quote_char* ~ "\"" | "'" ~ single_quote_char* ~ "'" }
 
-text = _{ SOI ~ value ~ EOI }
+text = _{ SOI ~ (value | none) ~ ","* ~ EOI }
 
 unicode_escape_sequence = @{ ASCII_HEX_DIGIT{4} }
 
@@ -203,6 +207,7 @@ impl<'de> de::Deserializer<'de> for &mut Deserializer<'de> {
             Rule::null => visitor.visit_unit(),
             Rule::boolean => visitor.visit_bool(parse_bool(&pair)),
             Rule::string | Rule::identifier => visitor.visit_string(parse_string(pair)?),
+            Rule::idinteger => visitor.visit_string(parse_integer(&pair)?.to_string()),
             Rule::number => {
                 if is_int(pair.as_str()) {
                     visitor.visit_i64(parse_integer(&pair)?)
@@ -212,6 +217,7 @@ impl<'de> de::Deserializer<'de> for &mut Deserializer<'de> {
             }
             Rule::array => visitor.visit_seq(Seq::new(pair)),
             Rule::object => visitor.visit_map(Map::new(pair)),
+            Rule::none => visitor.visit_none(),
             _ => unreachable!(),
         })();
         error::set_location(&mut res, &span);
